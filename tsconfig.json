@@ -1,9 +1,7 @@
 {
-    "exclude": ["dist"],
     "compilerOptions": {
         "esModuleInterop": true,
         "outDir": "dist",
         "baseUrl": "."
     },
-    "sourceMap": true
 }
