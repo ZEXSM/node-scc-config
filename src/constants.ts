@@ -11,5 +11,5 @@ export default {
     DIGEST,
     ITERATIONS,
     KEY_LENGTH,
-    INITIAL_VECTOR
-}
+    INITIAL_VECTOR,
+};

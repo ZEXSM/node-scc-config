@@ -10,7 +10,7 @@ const password = '12345678';
 
 
 app.get("/", (request, response) => {
-  response.send(`<h2>${decrypt(password, cipherText)}</h2>`);
+    response.send(`<h2>${decrypt(password, cipherText)}</h2>`);
 });
 
 

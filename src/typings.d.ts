@@ -1,4 +1,4 @@
 export interface ICipherTextIV {
-    iv: Uint8Array;
-    ciphertext: Uint8Array;
+  iv: Uint8Array;
+  ciphertext: Uint8Array;
 }
