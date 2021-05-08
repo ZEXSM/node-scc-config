@@ -1,21 +1,8 @@
 import http from 'http';
 import { URL } from 'url';
 
-import { ISpringCloudConfigData, SpringCloudConfigData } from './spring-cloud-config-data';
-
-interface IHttpSpringCloudConfigClient {
-    beforeLoad(fn: (requestOptions: http.RequestOptions) => http.RequestOptions): IHttpSpringCloudConfigClient;
-    afterLoad(fn: (springCloudConfigData: ISpringCloudConfigData) => void): IHttpSpringCloudConfigClient;
-    load(): Promise<void>;
-}
-
-type TMapEnvironmentUrl = {
-    host: string;
-    prefix?: string;
-    name: string;
-    profiles: string;
-    label?: string;
-}
+import { ISpringCloudConfigData, SpringCloudConfigData } from '../data';
+import { IHttpSpringCloudConfigClient, TMapEnvironmentUrl } from './typings';
 
 class HttpSpringCloudConfigClient implements IHttpSpringCloudConfigClient {
     private requestOptions: http.RequestOptions;
@@ -146,6 +133,5 @@ class HttpSpringCloudConfigClient implements IHttpSpringCloudConfigClient {
 }
 
 export {
-    HttpSpringCloudConfigClient,
-    IHttpSpringCloudConfigClient
+    HttpSpringCloudConfigClient
 };

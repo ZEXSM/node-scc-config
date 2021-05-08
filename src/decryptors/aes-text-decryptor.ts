@@ -1,15 +1,13 @@
 import { pbkdf2Sync, createDecipheriv } from 'crypto';
 
-interface ITextDecryptor {
-    decrypt(password: string, data: string, salt?: string): Buffer;
-}
+import { ITextDecryptor } from './typings';
 
 type TCipherIV = {
     iv: Uint8Array;
     cipherHex: Uint8Array;
 }
 
-class TextDecryptor implements ITextDecryptor {
+class AesTextDecryptor implements ITextDecryptor {
     protected readonly DEFAULT_SALT = 'deadbeef';
     protected readonly ALGORITHM_NAME = 'aes-256-cbc';
     protected readonly DIGEST = 'sha1';
@@ -45,6 +43,5 @@ class TextDecryptor implements ITextDecryptor {
 }
 
 export {
-    ITextDecryptor,
-    TextDecryptor
+    AesTextDecryptor
 };

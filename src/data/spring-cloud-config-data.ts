@@ -1,10 +1,5 @@
-import { ITextDecryptor, TextDecryptor } from './text-decryptor';
-
-interface ISpringCloudConfigData {
-    get<T>(): T;
-    set<T>(): ISpringCloudConfigData;
-    setDecrypt(textDecryptor: ITextDecryptor): ISpringCloudConfigData;
-}
+import { AesTextDecryptor, ITextDecryptor } from "../decryptors";
+import { ISpringCloudConfigData } from "./typings";
 
 class SpringCloudConfigData implements ISpringCloudConfigData {
 
@@ -13,7 +8,7 @@ class SpringCloudConfigData implements ISpringCloudConfigData {
 
     public constructor(data: any) {
         this.data = data;
-        this.textDecryptor = new TextDecryptor();
+        this.textDecryptor = new AesTextDecryptor();
     }
 
     setDecrypt(textDecryptor: ITextDecryptor): ISpringCloudConfigData {
@@ -44,6 +39,5 @@ class SpringCloudConfigData implements ISpringCloudConfigData {
 }
 
 export {
-    SpringCloudConfigData,
-    ISpringCloudConfigData
+    SpringCloudConfigData
 }

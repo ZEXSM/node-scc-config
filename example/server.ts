@@ -1,8 +1,8 @@
 
 import express from "express";
-import { TextDecryptor } from "../src/text-decryptor";
+import { AesTextDecryptor } from "../src/decryptors";
 
-import { HttpSpringCloudConfigClient } from '../src/http-spring-cloud-config-client';
+import { HttpSpringCloudConfigClient } from '../src/clients';
 
 const app = express();
 
@@ -26,7 +26,7 @@ app.get("/", (request, response) => {
         .then()
         .catch(d => console.log(d));
 
-    response.send(`<h2>${new TextDecryptor().decrypt(password, cipherText)}}</h2>`);
+    response.send(`<h2>${new AesTextDecryptor().decrypt(password, cipherText)}}</h2>`);
 });
 
 

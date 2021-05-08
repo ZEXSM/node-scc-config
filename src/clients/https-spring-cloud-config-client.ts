@@ -1,11 +1,7 @@
 import http from 'http';
 import https from 'https'
 
-interface IHttpsSpringCloudConfigClient {
-    beforeLoad(callbackfn: (url: string | URL, requestOptions: https.RequestOptions) => https.RequestOptions): IHttpsSpringCloudConfigClient;
-    afterLoad(): IHttpsSpringCloudConfigClient;
-    load(): Promise<void>;
-}
+import { IHttpsSpringCloudConfigClient } from './typings';
 
 type TOptions = {
     baseUrl: string;
