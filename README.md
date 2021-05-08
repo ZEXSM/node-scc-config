@@ -1,1 +1,1 @@
-# node-decrypt-spring-cloud-config
+# node-scc-client
