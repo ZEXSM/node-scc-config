@@ -1,1 +1,1 @@
-# node-scc-client
+# node-scc-config

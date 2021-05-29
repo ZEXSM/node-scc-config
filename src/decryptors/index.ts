@@ -1,7 +1,9 @@
-import { AesTextDecryptor } from "./aes-text-decryptor";
-import { ITextDecryptor } from "./typings";
+import { AesDecryptor } from "./aes-decryptor";
+import { IDecryptor } from "./decryptor";
+import { ServiceDecryptor } from "./service-decryptor";
 
 export {
-    ITextDecryptor,
-    AesTextDecryptor
+    IDecryptor,
+    AesDecryptor,
+    ServiceDecryptor
 }

@@ -1,6 +1,1 @@
-import { HttpSpringCloudConfigClient, HttpsSpringCloudConfigClient } from '../src/clients';
-
-export {
-    HttpSpringCloudConfigClient,
-    HttpsSpringCloudConfigClient,
-}
+export * from './spring-cloud-config-client';

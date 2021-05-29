@@ -1,33 +1,58 @@
-
 import express from "express";
-import { AesTextDecryptor } from "../src/decryptors";
 
-import { HttpSpringCloudConfigClient } from '../src/clients';
+import { SpringCloudConfigClient } from "../src";
+import { getConfiguration } from "../src/configuration";
+import { ServiceDecryptor } from "../src/decryptors";
 
 const app = express();
 
-const cipherText = 'b165fc8cd067ae55136dea4ab478b5a1f157eba5df173c04e51b6982c06c682e';
-const password = '12345678';
+process.env["HOST"] = 'test'
+process.env["PROJECT_NAME"] = 'app-settings'
+process.env["SERVICE_NAME"] = 'app-service'
+process.env["SPRING_CLOUD_PROFILES"] = 'development'
 
-app.get("/", (request, response) => {
-    new HttpSpringCloudConfigClient({
-        host: 'H',
-        prefix: 'UP',
-        name: 'AN',
-        profiles: 'P',
-        label: 'L'
-    })
-        .beforeLoad(s => ({
-            ...s,
-            port: 90
-        }))
-        .afterLoad(d => d.setDecrypt(null))
-        .load()
-        .then()
-        .catch(d => console.log(d));
+type TestServiceConfig = {
+    block1: {
+        Url: string;
+    };
+    block2: {
+        Url: string;
+    };
+    block3: {
+        appService: {
+            Url: string;
+            UserName: string;
+            Password: string;
+        };
+    };
+};
 
-    response.send(`<h2>${new AesTextDecryptor().decrypt(password, cipherText)}}</h2>`);
+app.get("/", async (_, response) => {
+    try {
+        const config = getConfiguration<TestServiceConfig>();
+
+        response.json(config);
+    } catch (e) {
+        response.send(e.message);
+    }
 });
 
 
-app.listen(3000);
+app.listen(3000, async () => {
+    const client = new SpringCloudConfigClient(
+        `http://${process.env["HOST"]}/${process.env["PROJECT_NAME"]}/${process.env["SERVICE_NAME"]}/${process.env["SPRING_CLOUD_PROFILES"]}`);
+
+    await client
+        .beforeLoad(s => ({
+            ...s,
+            port: 80
+        }))
+        .afterLoad(d => {
+            d
+                .setChipherMarker('{cipher}')
+                // .setDecryptor(new AesDecryptor('password'));
+                .setDecryptor(new ServiceDecryptor(
+                    `http://${process.env["HOST"]}/${process.env["PROJECT_NAME"]}/decrypt`));
+        })
+        .load();
+});
