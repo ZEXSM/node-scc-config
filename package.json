@@ -1,9 +1,9 @@
 {
-  "name": "node-scc-client",
+  "name": "node-scc-config",
   "version": "1.0.0",
   "author": "ZEXSM",
   "private": true,
-  "description": "Decrypting data encrypted in Spring Cloud Config",
+  "description": "Configuring a Node.js application based on Spring Cloud Config",
   "license": "MIT",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -21,7 +21,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ZEXSM/node-scc-client"
+    "url": "git+https://github.com/ZEXSM/node-scc-config"
   },
   "keywords": [
     "nodejs",
