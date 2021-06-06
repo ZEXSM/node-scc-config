@@ -1,10 +1,54 @@
-import { TextDecryptor } from '../src/text-decryptor';
+import nock from 'nock';
 
-test('decrypt of encrypt in the spring cloud config data', () => {
-    const ciphertext = '6f734043516cbbbcce10d16189cf42fd51348e82dc480eb0fcc0829c544ef38c';
-    const password = '89073846';
+import { SpringCloudConfigClient } from '../src';
+import { getConfiguration, TConfiguration } from '../src/configuration';
 
-    const decrypted = new TextDecryptor().decrypt(password, ciphertext).toString('utf8');
+describe('nodejs client for spring cloud config', () => {
+    const obj = {
+        test: 'test value'
+    }
 
-    expect(decrypted).toBe('ProstoTest');
+    const serviceName = 'app-service';
+    const config: TConfiguration<{ test: string }> = {
+        name: serviceName,
+        profiles: ['develppment'],
+        propertySources: [
+            {
+                name: 'develppment',
+                source: obj
+            }
+        ],
+    }
+
+    beforeAll(() => {
+        nock('http://test')
+            .persist()
+            .get('/app-service/development')
+            .reply(200, config);
+
+        nock('https://test')
+            .persist()
+            .get('/app-service/development')
+            .reply(200, config);
+    })
+
+    test('load by http', async () => {
+        const url = `http://test/${serviceName}/development`;
+
+        const client = new SpringCloudConfigClient(url);
+
+        await client.load();
+
+        expect(getConfiguration()).toEqual(obj);
+    });
+
+    test('load by https', async () => {
+        const url = `https://test/${serviceName}/development`;
+
+        const client = new SpringCloudConfigClient(url);
+
+        await client.load();
+
+        expect(getConfiguration()).toEqual(obj);
+    });
 });

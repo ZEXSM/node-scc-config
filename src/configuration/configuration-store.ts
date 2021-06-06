@@ -10,7 +10,7 @@ type TConfiguration<T> = {
     profiles: string[];
     label?: string;
     version?: string;
-    state: unknown;
+    state?: unknown;
     propertySources: TPropertySource<T>[];
 };
 
@@ -34,7 +34,6 @@ class ConfigurationStore<T> implements IConfigurationStore {
     }
 
     public setChipherMarker(name: string): IConfigurationStore {
-        // TODO: нужен тольк для ases decryptor
         this.chipherMarker = name;
 
         return this;
@@ -87,6 +86,8 @@ class ConfigurationStore<T> implements IConfigurationStore {
 
 
 export {
+    TConfiguration,
+    TPropertySource,
     IConfigurationStore,
-    ConfigurationStore
+    ConfigurationStore,
 }
