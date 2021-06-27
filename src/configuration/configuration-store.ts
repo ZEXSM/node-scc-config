@@ -62,7 +62,7 @@ class ConfigurationStore<T> implements IConfigurationStore {
     }
 
     public get<T>(): T {
-        const source = JSON.parse(process.env[this.storeKey] ?? '{}') ?? {};
+        const source = JSON.parse(process.env[this.storeKey] || '{}') || {};
 
         return source;
     }

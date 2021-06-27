@@ -55,20 +55,19 @@ const client = new SpringCloudConfigClient('http://dev1/app-service-api/developm
 ```ts
 type AppServiceApiConfig = {
     block1: {
-        url: string
-    },
+        url: string;
+    };
     block2: {
-        url: string
-    },
+        url: string;
+    };
     block3: {
-        appService: {
-            url: string,
-            userName: string,
-            password: string
+        deepBlock1: {
+            Url: string;
+            UserName: string;
+            Password: string;
         };
     };
 };
-
 
 const config = getConfiguration<AppServiceApiConfig>();
 ```

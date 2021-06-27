@@ -40,7 +40,7 @@ class AesDecryptor implements IDecryptor {
     public decrypt(data: string): Promise<Buffer> {
         return new Promise((resolve, reject) => {
             try {
-                const key = this.createKey(Buffer.from(this.password), Buffer.from(this.salt ?? this.DEFAULT_SALT, 'hex'));
+                const key = this.createKey(Buffer.from(this.password), Buffer.from(this.salt || this.DEFAULT_SALT, 'hex'));
                 const { iv, cipherHex } = this.getCipherIV(data);
                 const decipher = createDecipheriv(this.ALGORITHM_NAME, key, iv);
 

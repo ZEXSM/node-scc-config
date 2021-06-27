@@ -11,7 +11,7 @@ process.env["PROJECT_NAME"] = 'app-settings'
 process.env["SERVICE_NAME"] = 'app-service'
 process.env["SPRING_CLOUD_PROFILES"] = 'development'
 
-type TestServiceConfig = {
+type AppServiceApiConfig = {
     block1: {
         Url: string;
     };
@@ -19,7 +19,7 @@ type TestServiceConfig = {
         Url: string;
     };
     block3: {
-        appService: {
+        deepBlock1: {
             Url: string;
             UserName: string;
             Password: string;
@@ -29,7 +29,7 @@ type TestServiceConfig = {
 
 app.get("/", async (_, response) => {
     try {
-        const config = getConfiguration<TestServiceConfig>();
+        const config = getConfiguration<AppServiceApiConfig>();
 
         response.json(config);
     } catch (e) {
