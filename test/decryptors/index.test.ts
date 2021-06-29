@@ -1,6 +1,6 @@
 import nock from 'nock';
 
-import { AesDecryptor, ServiceDecryptor } from '../../src/decryptors'
+import { AesDecryptor, ServiceDecryptor } from '../../src/decryptors';
 
 describe('decrypt of encrypt in the spring cloud config data', () => {
     test('AesDecryptor decrypt => success', async () => {
@@ -27,7 +27,7 @@ describe('decrypt of encrypt in the spring cloud config data', () => {
                 .matchHeader('Content-Type', 'text/plain')
                 .post('/decrypt')
                 .reply(200, 'ProstoTest');
-        })
+        });
 
         test('http', async () => {
             const url = 'http://test/decrypt';

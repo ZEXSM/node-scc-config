@@ -6,7 +6,7 @@ import { getConfiguration, TConfiguration } from '../src/configuration';
 describe('nodejs client for spring cloud config', () => {
     const obj = {
         test: 'test value'
-    }
+    };
 
     const serviceName = 'app-service';
     const config: TConfiguration<{ test: string }> = {
@@ -18,7 +18,7 @@ describe('nodejs client for spring cloud config', () => {
                 source: obj
             }
         ],
-    }
+    };
 
     beforeAll(() => {
         nock('http://test')
@@ -30,7 +30,7 @@ describe('nodejs client for spring cloud config', () => {
             .persist()
             .get('/app-service/development')
             .reply(200, config);
-    })
+    });
 
     test('load by http', async () => {
         const url = `http://test/${serviceName}/development`;
