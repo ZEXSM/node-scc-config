@@ -3,6 +3,8 @@ import { IDecryptor } from "../decryptors";
 interface IConfigurationStore {
     setDecryptor(decryptor: IDecryptor): void;
     setChipherMarker(name: string): IConfigurationStore;
+    setPrepareSource<T>(prepareSource: (source: Record<string, any>) => T): IConfigurationStore;
+    setMergeSource<T>(mergeSource: (configuration?: TConfiguration<T>) => T): IConfigurationStore;
 }
 
 type TConfiguration<T> = {
@@ -21,16 +23,20 @@ type TPropertySource<T> = {
 
 class ConfigurationStore<T> implements IConfigurationStore {
 
-    private readonly storeKey = 'SPRING_CLOUD_CONFIG_SOURCE';
-    private readonly configuration: TConfiguration<T>;
+    private readonly storeKey = 'NODE-SCC-CONFIG';
+    private readonly configuration?: TConfiguration<T>;
 
-    private decryptor: IDecryptor | null;
     private chipherMarker: string;
+    private decryptor: IDecryptor | null;
+    private prepareSource: ((source: Record<string, any>) => T) | null;
+    private mergeSource: ((configuration?: TConfiguration<T>) => T) | null;
 
-    public constructor(configuration: TConfiguration<T>) {
+    public constructor(configuration?: TConfiguration<T>) {
         this.configuration = configuration;
         this.chipherMarker = '{cipher}';
         this.decryptor = null;
+        this.prepareSource = null;
+        this.mergeSource = null;
     }
 
     public setChipherMarker(name: string): IConfigurationStore {
@@ -47,24 +53,82 @@ class ConfigurationStore<T> implements IConfigurationStore {
         this.decryptor = decryptor;
     }
 
-    public async set(): Promise<void> {
-        let source = this.configuration.propertySources[0]?.source;
+    public setPrepareSource<T>(prepareSource: (source: Record<string, any>) => T): IConfigurationStore {
+        if (!prepareSource) {
+            throw new Error('prepareSource is null');
+        }
 
-        if (!source) {
+        (this.prepareSource as unknown as (source: T) => T) = prepareSource;
+
+        return this;
+    }
+
+    public setMergeSource<T>(mergeSource: (configuration?: TConfiguration<T>) => T): IConfigurationStore {
+        if (!mergeSource) {
+            throw new Error('mergeSource is null');
+        }
+
+        (this.mergeSource as unknown as (configuration?: TConfiguration<T>) => T) = mergeSource;
+
+        return this;
+    }
+
+    public async set(): Promise<void> {
+        let source: Record<string, any> = {};
+
+        if (this.mergeSource) {
+            source = this.mergeSource(this.configuration);
+        } else {
+            const propertySources = this.configuration?.propertySources ?? [];
+
+            for (let i = propertySources.length - 1; i >= 0; i--) {
+                source = { ...source, ...propertySources[i].source };
+            }
+        }
+
+        if (Object.keys(source).length === 0) {
             return;
         }
 
         if (this.decryptor) {
-            source = await this.decriptSource(source) as T;
+            source = await this.decriptSource(source);
         }
 
-        process.env[this.storeKey] = JSON.stringify(source);
+        let sourceObj: Record<string, any> = {};
+
+        if (this.prepareSource) {
+            sourceObj = this.prepareSource(source as T);
+        } else {
+            for (const [key, value] of Object.entries(source)) {
+                const keys = key.split('.');
+                this.createSourceObject(keys, sourceObj, value);
+            }
+        }
+
+        process.env[this.storeKey] = JSON.stringify(sourceObj);
     }
 
     public get<T>(): T {
-        const source = JSON.parse(process.env[this.storeKey] || '{}') || {};
+        return JSON.parse(process.env[this.storeKey] || '{}') || {};
+    }
 
-        return source;
+    private createSourceObject(keys: string[], obj: Record<string, any>, value: string) {
+        const key = keys.shift();
+
+        if (!key) {
+            return;
+        }
+
+        if (keys.length === 0) {
+            obj[key] = value;
+            return;
+        }
+
+        if (!obj[key]) {
+            obj[key] = {};
+        }
+
+        this.createSourceObject(keys, obj[key], value);
     }
 
     private async decriptSource(source: Record<string, any>): Promise<Record<string, any>> {

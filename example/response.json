@@ -1,0 +1,30 @@
+{
+    "name": "app-service",
+    "profiles": [
+        "development"
+    ],
+    "label": null,
+    "version": null,
+    "state": null,
+    "propertySources": [
+        {
+            "name": "classpath:configs/app-service/app-service-development.yml",
+            "source": {
+                "options.service.url": "http://app-service/endpoint",
+                "options.service.login": "tech",
+                "options.service.password": "{cipher}5eec033b24bc736fcbdbe1cf496149fbd1db16fd096264326e9c18f80d85b742",
+                "testOptions.url": "http://app-service/endpoint-test"
+            }
+        },
+        {
+            "name": "classpath:configs/app-service/app-service.yml",
+            "source": {
+                "logLevel": "fatal",
+                "options.service.url": "http://app-service/endpoint",
+                "options.service.login": "defaultTech",
+                "options.service.password": "{cipher}5eec033b24bc736fcbdbe1cf496149fbd1db16fd096264326e9c18f80d85b742",
+                "testOptions.url": "http://app-service/endpoint-test"
+            }
+        }
+    ]
+}

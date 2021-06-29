@@ -11,10 +11,10 @@ describe('nodejs client for spring cloud config', () => {
     const serviceName = 'app-service';
     const config: TConfiguration<{ test: string }> = {
         name: serviceName,
-        profiles: ['develppment'],
+        profiles: ['development'],
         propertySources: [
             {
-                name: 'develppment',
+                name: 'development',
                 source: obj
             }
         ],

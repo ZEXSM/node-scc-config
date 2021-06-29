@@ -15,59 +15,113 @@ $ yarn add node-scc-config
 ## Usage
 
 1. Create a client-side pointer to the Spring Cloud Config service
-
-```ts
-const client = new SpringCloudConfigClient('http://dev1/app-service-api/development');
-```
+    ```ts
+    const client = new SpringCloudConfigClient('http://test/app-service/development');
+    ```
 
 2. Configuring the client before calling
-```ts
+    ```ts
     client
         .beforeLoad(s => ({
             ...s,
             port: 9090
         }))
-```
+    ```
 
 2. Configuring the client after the call
-* Client data decryption
-```ts
+    > Chipher marker defaults to '{cipher}'
+* chipher marker
+    ```ts
     client
         .afterLoad(d => d
             .setChipherMarker('{cipher}')
-            .setDecryptor(new AesDecryptor('password')))
-```
+    ```
 
-* Server data decryption
-```ts
-    client
-        .afterLoad(d => d
-            .setChipherMarker('{cipher}')
-            .setDecryptor(new ServiceDecryptor('http://dev1/decrypt')))
-```
-> Chipher marker defaults to '{cipher}'
+* data decryption
+    1. client
+        ```ts
+        client
+            .afterLoad(d => d
+                .setDecryptor(new AesDecryptor('password')))
+        ```
+    2. server
+        ```ts
+        client
+            .afterLoad(d => d
+                .setDecryptor(new ServiceDecryptor('http://test/decrypt')))
+        ```
+* source preparation 
+    1. merge source
+        > default implementation example
+        ```ts
+        client
+            .afterLoad(d => d
+                .setMergeSource<AppServiceApiConfig>((configuration?: TConfiguration<AppServiceApiConfig>) => {
+                    let source: Record<string, any> = {};
+                    const propertySources = configuration?.propertySources ?? [];
+
+                    for (let i = propertySources.length - 1; i >= 0; i--) {
+                        source = { ...source, ...propertySources[i].source };
+                    }
+
+                    return source as AppServiceApiConfig;
+                }))
+        ```
+    2. prepare source
+        > default implementation example
+        ```ts
+        client
+            .afterLoad(d => d
+                .setPrepareSource<AppServiceApiConfig>((source: Record<string, any>)=>{
+                        let sourceObj: Record<string, any> = {};
+
+                        const createSourceObject = (keys: string[], obj: Record<string, any>, value: string) => {
+                            const key = keys.shift();
+
+                            if (!key) {
+                                return;
+                            }
+
+                            if (keys.length === 0) {
+                                obj[key] = value;
+                                return;
+                            }
+
+                            if (!obj[key]) {
+                                obj[key] = {};
+                            }
+
+                            createSourceObject(keys, obj[key], value);
+                        }
+
+                    for (const [key, value] of Object.entries(source)) {
+                        const keys = key.split('.');
+                        createSourceObject(keys, sourceObj, value);
+                    }
+
+                    return sourceObj as AppServiceApiConfig;
+                }))
+        ```
 3. Loading the configuration
-```ts
+    ```ts
     await client.load();
-```
+    ```
 
 4. Using the loaded configuration
-```ts
-type AppServiceApiConfig = {
-    block1: {
-        url: string;
-    };
-    block2: {
-        url: string;
-    };
-    block3: {
-        deepBlock1: {
-            Url: string;
-            UserName: string;
-            Password: string;
+    ```ts
+    type AppServiceApiConfig = {
+        logLevel: string;
+        options: {
+            service: {
+                url: string;
+                login: string;
+                password: string;
+            };
+        };
+        testOptions: {
+            url: string;
         };
     };
-};
 
-const config = getConfiguration<AppServiceApiConfig>();
-```
+    const config = getConfiguration<AppServiceApiConfig>();
+    ```

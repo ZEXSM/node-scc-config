@@ -1,7 +1,9 @@
+import { ConfigurationStore } from './configuration-store';
+
 export * from './configuration-store'
 
 export const getConfiguration = <T>(): T => {
-    const source = JSON.parse(process.env['SPRING_CLOUD_CONFIG_SOURCE'] || '{}') || {};
+    const configurationStore = new ConfigurationStore();
 
-    return source;
+    return configurationStore.get<T>();
 }
