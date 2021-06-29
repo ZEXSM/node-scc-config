@@ -132,7 +132,7 @@ class ConfigurationStore<T> implements IConfigurationStore {
     }
 
     private async decriptSource(source: Record<string, any>): Promise<Record<string, any>> {
-        for (let key of Object.keys(source)) {
+        for (const key of Object.keys(source)) {
             if (source[key]?.startsWith(this.chipherMarker)) {
                 const data = source[key].replace(this.chipherMarker, '');
 
@@ -154,4 +154,4 @@ export {
     TPropertySource,
     IConfigurationStore,
     ConfigurationStore,
-}
+};

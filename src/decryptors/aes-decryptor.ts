@@ -35,7 +35,7 @@ class AesDecryptor implements IDecryptor {
             iv,
             cipherHex,
         };
-    };
+    }
 
     public decrypt(data: string): Promise<Buffer> {
         return new Promise((resolve, reject) => {
@@ -48,8 +48,8 @@ class AesDecryptor implements IDecryptor {
             } catch (error) {
                 reject(error);
             }
-        })
-    };
+        });
+    }
 }
 
 export {

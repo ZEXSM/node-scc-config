@@ -6,4 +6,4 @@ export {
     IDecryptor,
     AesDecryptor,
     ServiceDecryptor
-}
+};

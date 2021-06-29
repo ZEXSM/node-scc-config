@@ -1,6 +1,19 @@
 language: node_js
-node_js: 3.1
+node_js:
   - 10
 branches:
     only:
         - main
+script:
+    - npm run lint
+    - npm run test
+    - npm run build
+before_deploy:
+    - npm version patch
+deploy:
+    provider: npm
+    email: $NPM_EMAIL
+    api_key: $NPM_API_TOKEN
+    cleanup: true
+    on:
+        branch: main

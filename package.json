@@ -11,13 +11,7 @@
     "build": "tsc",
     "test": "jest",
     "lint": "eslint --ext .ts src test",
-    "example": "ts-node-dev --respawn --transpile-only example/server.ts",
-    "prestart": "npm run build",
-    "prepare": "npm run build",
-    "preversion": "npm run lint",
-    "version": "git add -A",
-    "postversion": "git push && git push --tags",
-    "prepublishOnly": "npm test && npm run lint"
+    "example": "ts-node-dev --respawn --transpile-only example/server.ts"
   },
   "repository": {
     "type": "git",

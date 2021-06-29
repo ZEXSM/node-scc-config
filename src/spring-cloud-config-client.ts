@@ -1,5 +1,5 @@
 import http from 'http';
-import https from 'https'
+import https from 'https';
 import { URL } from 'url';
 
 import { ConfigurationStore, IConfigurationStore } from './configuration';
@@ -68,7 +68,7 @@ class SpringCloudConfigClient implements ISpringCloudConfigClient {
                 })
                 .on('error', error => reject(error))
                 .end();
-        })
+        });
     }
 
     public beforeLoad(fn: (requestOptions: http.RequestOptions | https.RequestOptions) => http.RequestOptions | https.RequestOptions): ISpringCloudConfigClient {
