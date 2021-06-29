@@ -38,20 +38,20 @@ $ yarn add node-scc-config
     ```
 
 * data decryption
-    1. client
+    * client
         ```ts
         client
             .afterLoad(d => d
                 .setDecryptor(new AesDecryptor('password')))
         ```
-    2. server
+    * server
         ```ts
         client
             .afterLoad(d => d
                 .setDecryptor(new ServiceDecryptor('http://test/decrypt')))
         ```
 * source preparation 
-    1. merge source
+    * merge source
         > default implementation example
         ```ts
         client
@@ -67,32 +67,32 @@ $ yarn add node-scc-config
                     return source as AppServiceApiConfig;
                 }))
         ```
-    2. prepare source
+    * prepare source
         > default implementation example
         ```ts
         client
             .afterLoad(d => d
                 .setPrepareSource<AppServiceApiConfig>((source: Record<string, any>)=>{
-                        let sourceObj: Record<string, any> = {};
+                    let sourceObj: Record<string, any> = {};
 
-                        const createSourceObject = (keys: string[], obj: Record<string, any>, value: string) => {
-                            const key = keys.shift();
+                    const createSourceObject = (keys: string[], obj: Record<string, any>, value: string) => {
+                        const key = keys.shift();
 
-                            if (!key) {
-                                return;
-                            }
-
-                            if (keys.length === 0) {
-                                obj[key] = value;
-                                return;
-                            }
-
-                            if (!obj[key]) {
-                                obj[key] = {};
-                            }
-
-                            createSourceObject(keys, obj[key], value);
+                        if (!key) {
+                            return;
                         }
+
+                        if (keys.length === 0) {
+                            obj[key] = value;
+                            return;
+                        }
+
+                        if (!obj[key]) {
+                            obj[key] = {};
+                        }
+
+                        createSourceObject(keys, obj[key], value);
+                    }
 
                     for (const [key, value] of Object.entries(source)) {
                         const keys = key.split('.');
