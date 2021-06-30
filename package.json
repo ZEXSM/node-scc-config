@@ -1,7 +1,6 @@
 {
   "name": "node-scc-config",
   "version": "1.0.0",
-  "private": true,
   "author": "ZEXSM",
   "description": "Configuring a Node.js application based on Spring Cloud Config",
   "license": "MIT",
