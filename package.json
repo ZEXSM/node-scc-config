@@ -1,6 +1,7 @@
 {
   "name": "node-scc-config",
-  "version": "1.0.3",
+  "version": "1.0.0",
+  "private": true,
   "author": "ZEXSM",
   "description": "Configuring a Node.js application based on Spring Cloud Config",
   "license": "MIT",
@@ -18,10 +19,9 @@
   },
   "keywords": [
     "nodejs",
-    "server",
     "typescript",
     "decrypt",
-    "sping-cloud"
+    "sping-cloud-config"
   ],
   "dependencies": {
     "node": ">=10"
