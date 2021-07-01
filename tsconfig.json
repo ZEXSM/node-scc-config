@@ -2,6 +2,11 @@
     "include": [
         "src/**/*"
     ],
+    "exclude": [
+        "dist",
+        "node_modules",
+        "test/**/*"
+    ],
     "compilerOptions": {
         "target": "es5",
         "module": "commonjs",

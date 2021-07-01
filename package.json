@@ -1,16 +1,23 @@
 {
   "name": "node-scc-config",
   "version": "1.0.3",
+  "private": true,
   "author": "ZEXSM",
   "description": "Configuring a Node.js application based on Spring Cloud Config",
   "license": "MIT",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "tsc",
     "test": "jest",
     "lint": "eslint --ext .ts src test",
     "example": "ts-node-dev --respawn --transpile-only example/server.ts"
+  },
+  "publishConfig": {
+    "access": "public"
   },
   "repository": {
     "type": "git",
