@@ -7,11 +7,11 @@
 
 ## Installation
 ```shell
-$ npm install node-scc-config
+npm install node-scc-config
 ```
 or
 ```shell
-$ yarn add node-scc-config
+yarn add node-scc-config
 ```
 
 ## Usage
