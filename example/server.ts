@@ -60,49 +60,8 @@ app.listen(3000, async () => {
                 port: 80
             }))
             .afterLoad(d => {
-                d
-                    .setChipherMarker('{cipher}')
-                    .setMergeSource<AppServiceApiConfig>((configuration?: TConfiguration<AppServiceApiConfig>) => {
-                        let source: Record<string, any> = {};
-                        const propertySources = configuration?.propertySources ?? [];
-
-                        for (let i = propertySources.length - 1; i >= 0; i--) {
-                            source = { ...source, ...propertySources[i].source };
-                        }
-
-                        return source as AppServiceApiConfig;
-                    })
-                    .setPrepareSource<AppServiceApiConfig>((source: Record<string, any>) => {
-                        let sourceObj: Record<string, any> = {};
-
-                        const createSourceObject = (keys: string[], obj: Record<string, any>, value: string) => {
-                            const key = keys.shift();
-
-                            if (!key) {
-                                return;
-                            }
-
-                            if (keys.length === 0) {
-                                obj[key] = value;
-                                return;
-                            }
-
-                            if (!obj[key]) {
-                                obj[key] = {};
-                            }
-
-                            createSourceObject(keys, obj[key], value);
-                        }
-
-                        for (const [key, value] of Object.entries(source)) {
-                            const keys = key.split('.');
-                            createSourceObject(keys, sourceObj, value);
-                        }
-
-                        return sourceObj as AppServiceApiConfig;
-                    })
-                    .setDecryptor(new ServiceDecryptor(
-                        `http://${process.env["HOST"]}/decrypt`));
+                d.setDecryptor(new ServiceDecryptor(
+                    `http://${process.env["HOST"]}/decrypt`));
             })
             .load();
     } catch (e) {
