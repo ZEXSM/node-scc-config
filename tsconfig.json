@@ -2,10 +2,6 @@
     "include": [
         "src/**/*"
     ],
-    "exclude": [
-        "node_modules",
-        "**/*.test.ts"
-    ],
     "compilerOptions": {
         "target": "es5",
         "module": "commonjs",
@@ -15,7 +11,6 @@
         "moduleResolution": "node",
         "removeComments": true,
         "declaration": true,
-        "outDir": "dist",
-        "baseUrl": ".",
+        "outDir": "dist"
     }
 }
