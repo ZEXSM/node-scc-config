@@ -1,6 +1,7 @@
 # Configure your Node.js applications using Spring Cloud Config
 
 [![Build Status](https://travis-ci.com/ZEXSM/node-scc-config.svg?branch=main)](https://travis-ci.com/ZEXSM/node-scc-config)
+[![Download Status](https://img.shields.io/npm/dt/node-scc-config)](https://www.npmjs.com/package/node-scc-config)
 
 ## Benefits
 * Server and client data decryption
