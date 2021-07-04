@@ -2,7 +2,7 @@ import express from "express";
 import nock from "nock";
 
 import { SpringCloudConfigClient } from "../src";
-import { getConfiguration, TConfiguration } from "../src/configuration";
+import { getConfiguration } from "../src/configuration";
 import { ServiceDecryptor } from "../src/decryptors";
 
 const app = express();

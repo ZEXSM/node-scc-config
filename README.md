@@ -85,6 +85,20 @@ yarn add node-scc-config
                             return;
                         }
 
+                        const keyArrayMatch = key.match(/^(\S+)\[\d+\]$/);
+
+                        if (keyArrayMatch) {
+                            const [, keyArray] = keyArrayMatch;
+
+                            if (!obj[keyArray]) {
+                                obj[keyArray] = [value];
+                            } else {
+                                obj[keyArray].push(value);
+                            }
+
+                            return;
+                        }
+
                         if (keys.length === 0) {
                             obj[key] = value;
                             return;

@@ -13,7 +13,10 @@
                 "options.service.url": "http://app-service/endpoint",
                 "options.service.login": "tech",
                 "options.service.password": "{cipher}5eec033b24bc736fcbdbe1cf496149fbd1db16fd096264326e9c18f80d85b742",
-                "testOptions.url": "http://app-service/endpoint-test"
+                "testOptions.url": "http://app-service/endpoint-test",
+                "options.service.whitelist[0]": 4441,
+                "options.service.whitelist[1]": 4442,
+                "options.service.whitelist[2]": 4443
             }
         },
         {
@@ -23,7 +26,11 @@
                 "options.service.url": "http://app-service/endpoint",
                 "options.service.login": "defaultTech",
                 "options.service.password": "{cipher}5eec033b24bc736fcbdbe1cf496149fbd1db16fd096264326e9c18f80d85b742",
-                "testOptions.url": "http://app-service/endpoint-test"
+                "testOptions.url": "http://app-service/endpoint-test",
+                "options.service.whitelist[0]": 3331,
+                "options.service.whitelist[1]": 3332,
+                "options.service.whitelist[2]": 3333,
+                "options.service.whitelist[3]": 3334
             }
         }
     ]
