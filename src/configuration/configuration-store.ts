@@ -101,7 +101,7 @@ class ConfigurationStore<T> implements IConfigurationStore {
         } else {
             for (const [key, value] of Object.entries(source)) {
                 const keys = key.split('.');
-                this.createSourceObject(keys, sourceObj, value);
+                this.toDeepSource(keys, sourceObj, value);
             }
         }
 
@@ -112,7 +112,7 @@ class ConfigurationStore<T> implements IConfigurationStore {
         return JSON.parse(process.env[this.storeKey] || '{}') || {};
     }
 
-    private createSourceObject(keys: string[], obj: Record<string, any>, value: string) {
+    private toDeepSource(keys: string[], obj: Record<string, any>, value: string) {
         const key = keys.shift();
 
         if (!key) {
@@ -142,7 +142,7 @@ class ConfigurationStore<T> implements IConfigurationStore {
             obj[key] = {};
         }
 
-        this.createSourceObject(keys, obj[key], value);
+        this.toDeepSource(keys, obj[key], value);
     }
 
     private async decryptSource(source: Record<string, any>): Promise<Record<string, any>> {
