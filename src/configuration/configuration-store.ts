@@ -91,7 +91,7 @@ class ConfigurationStore<T> implements IConfigurationStore {
         }
 
         if (this.decryptor) {
-            source = await this.decriptSource(source);
+            source = await this.decryptSource(source);
         }
 
         let sourceObj: Record<string, any> = {};
@@ -101,7 +101,7 @@ class ConfigurationStore<T> implements IConfigurationStore {
         } else {
             for (const [key, value] of Object.entries(source)) {
                 const keys = key.split('.');
-                this.createSourceObject(keys, sourceObj, value);
+                this.toDeepSource(keys, sourceObj, value);
             }
         }
 
@@ -112,10 +112,24 @@ class ConfigurationStore<T> implements IConfigurationStore {
         return JSON.parse(process.env[this.storeKey] || '{}') || {};
     }
 
-    private createSourceObject(keys: string[], obj: Record<string, any>, value: string) {
+    private toDeepSource(keys: string[], obj: Record<string, any>, value: string) {
         const key = keys.shift();
 
         if (!key) {
+            return;
+        }
+
+        const keyArrayMatch = key.match(/^(\S+)\[\d+\]$/);
+
+        if (keyArrayMatch) {
+            const [, keyArray] = keyArrayMatch;
+
+            if (!obj[keyArray]) {
+                obj[keyArray] = [value];
+            } else {
+                obj[keyArray].push(value);
+            }
+
             return;
         }
 
@@ -128,12 +142,15 @@ class ConfigurationStore<T> implements IConfigurationStore {
             obj[key] = {};
         }
 
-        this.createSourceObject(keys, obj[key], value);
+        this.toDeepSource(keys, obj[key], value);
     }
 
-    private async decriptSource(source: Record<string, any>): Promise<Record<string, any>> {
+    private async decryptSource(source: Record<string, any>): Promise<Record<string, any>> {
         for (const key of Object.keys(source)) {
-            if (source[key]?.startsWith(this.chipherMarker)) {
+            if (source[key]
+                && typeof source[key] === 'string'
+                && source[key].startsWith(this.chipherMarker)) {
+
                 const data = source[key].replace(this.chipherMarker, '');
 
                 const decriyptingData = await this.decryptor!.decrypt(data);
