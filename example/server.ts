@@ -59,10 +59,13 @@ app.listen(3000, async () => {
                 ...s,
                 port: 80
             }))
-            .afterLoad(d => {
-                d.setDecryptor(new ServiceDecryptor(
-                    `http://${process.env["HOST"]}/decrypt`));
-            })
+            .afterLoad(d => d
+                .setDecryptor(new ServiceDecryptor(
+                    `http://${process.env["HOST"]}/decrypt`))
+                .setReplacer({
+                    ['${HOST}']: 'test',
+                    ['${SERVICE_NAME}']: 'app-service'
+                }))
             .load();
     } catch (e) {
         console.log(e);

@@ -1,8 +1,9 @@
 import { IDecryptor } from "../decryptors";
 
 interface IConfigurationStore {
-    setDecryptor(decryptor: IDecryptor): void;
+    setDecryptor(decryptor: IDecryptor): IConfigurationStore;
     setChipherMarker(name: string): IConfigurationStore;
+    setReplacer(template: Record<string, string>): IConfigurationStore;
     setPrepareSource<T>(prepareSource: (source: Record<string, any>) => T): IConfigurationStore;
     setMergeSource<T>(mergeSource: (configuration?: TConfiguration<T>) => T): IConfigurationStore;
 }
@@ -27,6 +28,7 @@ class ConfigurationStore<T> implements IConfigurationStore {
     private readonly configuration?: TConfiguration<T>;
 
     private chipherMarker: string;
+    private template: Record<string, string> | null;
     private decryptor: IDecryptor | null;
     private prepareSource: ((source: Record<string, any>) => T) | null;
     private mergeSource: ((configuration?: TConfiguration<T>) => T) | null;
@@ -34,6 +36,7 @@ class ConfigurationStore<T> implements IConfigurationStore {
     public constructor(configuration?: TConfiguration<T>) {
         this.configuration = configuration;
         this.chipherMarker = '{cipher}';
+        this.template = null;
         this.decryptor = null;
         this.prepareSource = null;
         this.mergeSource = null;
@@ -45,12 +48,24 @@ class ConfigurationStore<T> implements IConfigurationStore {
         return this;
     }
 
-    public setDecryptor(decryptor: IDecryptor): void {
+    public setReplacer(template: Record<string, string>): IConfigurationStore {
+        if (!template) {
+            throw new Error('template is null');
+        }
+
+        this.template = template;
+
+        return this;
+    }
+
+    public setDecryptor(decryptor: IDecryptor): IConfigurationStore {
         if (!decryptor) {
             throw new Error('decryptor is null');
         }
 
         this.decryptor = decryptor;
+
+        return this;
     }
 
     public setPrepareSource<T>(prepareSource: (source: Record<string, any>) => T): IConfigurationStore {
@@ -86,12 +101,18 @@ class ConfigurationStore<T> implements IConfigurationStore {
             }
         }
 
-        if (Object.keys(source).length === 0) {
+        const keysSource = Object.keys(source);
+
+        if (keysSource.length === 0) {
             return;
         }
 
         if (this.decryptor) {
-            source = await this.decryptSource(source);
+            source = await this.decryptSource(keysSource, source, this.decryptor);
+        }
+
+        if (this.template) {
+            source = this.replacer(keysSource, source, this.template);
         }
 
         let sourceObj: Record<string, any> = {};
@@ -145,21 +166,40 @@ class ConfigurationStore<T> implements IConfigurationStore {
         this.toDeepSource(keys, obj[key], value);
     }
 
-    private async decryptSource(source: Record<string, any>): Promise<Record<string, any>> {
-        for (const key of Object.keys(source)) {
-            if (source[key]
-                && typeof source[key] === 'string'
-                && source[key].startsWith(this.chipherMarker)) {
+    private replacer(keysSource: string[], source: Record<string, any>, template: Record<string, string>): Record<string, any> {
+        const keysTemplate = Object.keys(template);
 
-                const data = source[key].replace(this.chipherMarker, '');
+        for (const keySource of keysSource) {
+            const value = source[keySource];
 
-                const decriyptingData = await this.decryptor!.decrypt(data);
+            if (value && typeof value === 'string') {
 
-                source[key] = decriyptingData.toString('utf8');
+                for (const keyTemplate of keysTemplate) {
+                    source[keySource] = source[keySource].replace(keyTemplate, template[keyTemplate]);
+                }
             }
         }
 
-        process.env[this.storeKey] = JSON.stringify(source);
+        return source;
+    }
+
+    private async decryptSource(keysSource: string[], source: Record<string, any>, decryptor: IDecryptor)
+        : Promise<Record<string, any>> {
+
+        for (const keySource of keysSource) {
+            const value = source[keySource];
+
+            if (value
+                && typeof value === 'string'
+                && value.startsWith(this.chipherMarker)) {
+
+                const data = value.replace(this.chipherMarker, '');
+
+                const decriyptingData = await decryptor.decrypt(data);
+
+                source[keySource] = decriyptingData.toString('utf8');
+            }
+        }
 
         return source;
     }

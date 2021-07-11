@@ -10,7 +10,6 @@
 ```shell
 npm install node-scc-config
 ```
-or
 ```shell
 yarn add node-scc-config
 ```
@@ -31,95 +30,54 @@ yarn add node-scc-config
         }))
     ```
 
-2. Configuring the client after the call
+3. Configuring the client after the call
     > Chipher marker defaults to '{cipher}'
-* chipher marker
+* Chipher marker
     ```ts
     client
         .afterLoad(d => d
-            .setChipherMarker('{cipher}')
+            .setChipherMarker('your chipher marker...')
     ```
-
-* data decryption
+* Data replacer by templates
+    > Example: { ['{HOST}']: 'test', ['{SERVICE_NAME}']: 'app-service' }
+    ```ts
+    client
+        .afterLoad(d => d
+            .setReplacer('your template...')
+    ```
+* Data decryption
     * client
         ```ts
         client
             .afterLoad(d => d
-                .setDecryptor(new AesDecryptor('password')))
+                .setDecryptor(new AesDecryptor('your secret key or password...')))
         ```
     * server
         ```ts
         client
             .afterLoad(d => d
-                .setDecryptor(new ServiceDecryptor('http://test/decrypt')))
+                .setDecryptor(new ServiceDecryptor('your decryption endpoint address...')))
         ```
-* source preparation 
-    * merge source
-        > default implementation example
+* Source preparation 
+    * Merge source
+        > Default implementation if no function is specified
         ```ts
         client
             .afterLoad(d => d
                 .setMergeSource<AppServiceApiConfig>((configuration?: TConfiguration<AppServiceApiConfig>) => {
-                    let source: Record<string, any> = {};
-                    const propertySources = configuration?.propertySources ?? [];
-
-                    for (let i = propertySources.length - 1; i >= 0; i--) {
-                        source = { ...source, ...propertySources[i].source };
-                    }
-
-                    return source as AppServiceApiConfig;
+                    'your code to merge source...'
                 }))
         ```
-    * prepare source
-        > default implementation example
+    * Prepare source
+        > Default implementation if no function is specified
         ```ts
         client
             .afterLoad(d => d
-                .setPrepareSource<AppServiceApiConfig>((source: Record<string, any>)=>{
-                    let sourceObj: Record<string, any> = {};
-
-                    const createSourceObject = (keys: string[], obj: Record<string, any>, value: string) => {
-                        const key = keys.shift();
-
-                        if (!key) {
-                            return;
-                        }
-
-                        const keyArrayMatch = key.match(/^(\S+)\[\d+\]$/);
-
-                        if (keyArrayMatch) {
-                            const [, keyArray] = keyArrayMatch;
-
-                            if (!obj[keyArray]) {
-                                obj[keyArray] = [value];
-                            } else {
-                                obj[keyArray].push(value);
-                            }
-
-                            return;
-                        }
-
-                        if (keys.length === 0) {
-                            obj[key] = value;
-                            return;
-                        }
-
-                        if (!obj[key]) {
-                            obj[key] = {};
-                        }
-
-                        createSourceObject(keys, obj[key], value);
-                    }
-
-                    for (const [key, value] of Object.entries(source)) {
-                        const keys = key.split('.');
-                        createSourceObject(keys, sourceObj, value);
-                    }
-
-                    return sourceObj as AppServiceApiConfig;
+                .setPrepareSource<AppServiceApiConfig>((source: Record<string, any>) => {
+                    'your code to prepare source...'
                 }))
         ```
-3. Loading the configuration
+3. Call loading the configuration
     ```ts
     await client.load();
     ```
