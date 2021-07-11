@@ -65,7 +65,7 @@ yarn add node-scc-config
         client
             .afterLoad(d => d
                 .setMergeSource<AppServiceApiConfig>((configuration?: TConfiguration<AppServiceApiConfig>) => {
-                    'your code to merge source...'
+                    your code to merge source...
                 }))
         ```
     * Prepare source
@@ -74,7 +74,7 @@ yarn add node-scc-config
         client
             .afterLoad(d => d
                 .setPrepareSource<AppServiceApiConfig>((source: Record<string, any>) => {
-                    'your code to prepare source...'
+                    your code to prepare source...
                 }))
         ```
 3. Call loading the configuration
