@@ -18,7 +18,7 @@ yarn add node-scc-config
 
 1. Create a client-side pointer to the Spring Cloud Config service
     ```ts
-    const client = new SpringCloudConfigClient('http://test/app-service/development');
+    const client = new SpringCloudConfigClient('your spring cloud config endpoint address...');
     ```
 
 2. Configuring the client before calling
