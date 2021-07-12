@@ -25,8 +25,7 @@ yarn add node-scc-config
     ```ts
     client
         .beforeLoad(s => ({
-            ...s,
-            port: 9090
+            your request options...
         }))
     ```
 
