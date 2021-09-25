@@ -122,7 +122,7 @@ class ConfigurationStore<T> implements IConfigurationStore {
         } else {
             for (const [key, value] of Object.entries(source)) {
                 const keys = key.split('.');
-                this.toDeepSource(keys, sourceObj, value);
+                this.toObject(keys, sourceObj, value);
             }
         }
 
@@ -133,22 +133,40 @@ class ConfigurationStore<T> implements IConfigurationStore {
         return JSON.parse(process.env[this.storeKey] || '{}') || {};
     }
 
-    private toDeepSource(keys: string[], obj: Record<string, any>, value: string) {
+    private toObject(keys: string[], obj: Record<string, any>, value: string) {
         const key = keys.shift();
 
         if (!key) {
             return;
         }
 
-        const keyArrayMatch = key.match(/^(\S+)\[\d+\]$/);
+        const keyArrayMatch = key.match(/^(\S+)\[(\d+)\]$/);
 
         if (keyArrayMatch) {
-            const [, keyArray] = keyArrayMatch;
+            const [, keyArray, positionArray] = keyArrayMatch;
 
-            if (!obj[keyArray]) {
-                obj[keyArray] = [value];
-            } else {
-                obj[keyArray].push(value);
+            if (keys.length > 0) {
+                if (!obj[keyArray]) {
+                    const arrayObj: Record<string, any> = {};
+                    this.toObject(keys, arrayObj, value);
+                    obj[keyArray] = [arrayObj];
+                } else if (!obj[keyArray][positionArray]) {
+                    const arrayObj: Record<string, any> = {};
+                    this.toObject(keys, arrayObj, value);
+                    obj[keyArray][positionArray] = arrayObj;
+                }
+                else {
+                    const arrayObj = obj[keyArray][positionArray];
+                    this.toObject(keys, arrayObj, value);
+                    obj[keyArray][positionArray] = arrayObj;
+                }
+            }
+            else {
+                if (!obj[keyArray]) {
+                    obj[keyArray] = [value];
+                } else {
+                    obj[keyArray][positionArray] = value;
+                }
             }
 
             return;
@@ -163,7 +181,7 @@ class ConfigurationStore<T> implements IConfigurationStore {
             obj[key] = {};
         }
 
-        this.toDeepSource(keys, obj[key], value);
+        this.toObject(keys, obj[key], value);
     }
 
     private replacer(keysSource: string[], source: Record<string, any>, template: Record<string, string>): Record<string, any> {
