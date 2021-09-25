@@ -16,7 +16,11 @@
                 "testOptions.url": "http://${HOST}/${SERVICE_NAME}/endpoint-test",
                 "options.service.whitelist[0]": 4441,
                 "options.service.whitelist[1]": 4442,
-                "options.service.whitelist[2]": 4443
+                "options.service.whitelist[2]": 4443,
+                "objects[0].id": "723684683264",
+                "objects[0].code": "tes_code",
+                "objects[1].id": "899778923444",
+                "objects[1].code": "tes_code1"
             }
         },
         {

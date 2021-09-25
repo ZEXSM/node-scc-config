@@ -18,8 +18,10 @@ type AppServiceApiConfig = {
             url: string;
             login: string;
             password: string;
+            whitelist: number[];
         };
     };
+    objects: { id: string; code: string }[]
     testOptions: {
         url: string;
     };

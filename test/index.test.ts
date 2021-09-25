@@ -1,35 +1,53 @@
 import nock from 'nock';
+import path from 'path';
 
 import { SpringCloudConfigClient } from '../src';
-import { getConfiguration, TConfiguration } from '../src/configuration';
+import { getConfiguration } from '../src/configuration';
+
+type TestConfig = {
+    logLevel: string;
+    options: {
+        service: {
+            url: string;
+            login: string;
+            password: string;
+            whitelist: number[];
+        };
+    };
+    objects: { id: string; code: string }[]
+    testOptions: {
+        url: string;
+    };
+};
 
 describe('nodejs client for spring cloud config', () => {
+    const serviceName = 'test-service';
     const obj = {
-        test: 'test value'
-    };
-
-    const serviceName = 'app-service';
-    const config: TConfiguration<{ test: string }> = {
-        name: serviceName,
-        profiles: ['development'],
-        propertySources: [
-            {
-                name: 'development',
-                source: obj
+        "logLevel": "fatal",
+        "options": {
+            "service": {
+                "url": "http://app-service/endpoint",
+                "login": "tech",
+                "password": "{cipher}5eec033b24bc736fcbdbe1cf496149fbd1db16fd096264326e9c18f80d85b742",
+                "whitelist": [4441, 4442, 4443, 3334]
             }
-        ],
+        },
+        "testOptions": {
+            "url": "http://${HOST}/${SERVICE_NAME}/endpoint-test"
+        },
+        "objects": [
+            { "id": "723684683264", "code": "tes_code" },
+            { "id": "899778923444", "code": "tes_code1" }
+        ]
     };
 
     beforeAll(() => {
         nock('http://test')
             .persist()
-            .get('/app-service/development')
-            .reply(200, config);
-
-        nock('https://test')
-            .persist()
-            .get('/app-service/development')
-            .reply(200, config);
+            .get(`/${serviceName}/development`)
+            .replyWithFile(200, path.resolve('./example/response.json'), {
+                'Content-Type': 'application/json',
+            });
     });
 
     test('load by http', async () => {
@@ -39,7 +57,7 @@ describe('nodejs client for spring cloud config', () => {
 
         await client.load();
 
-        expect(getConfiguration()).toEqual(obj);
+        expect(getConfiguration<TestConfig>()).toEqual(obj);
     });
 
     test('load by https', async () => {
@@ -49,6 +67,6 @@ describe('nodejs client for spring cloud config', () => {
 
         await client.load();
 
-        expect(getConfiguration()).toEqual(obj);
+        expect(getConfiguration<TestConfig>()).toEqual(obj);
     });
 });
