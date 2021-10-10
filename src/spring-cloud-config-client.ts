@@ -25,7 +25,7 @@ class SpringCloudConfigClient implements ISpringCloudConfigClient {
     }
 
     private get protocol() {
-        if (this.url.protocol === 'https') {
+        if (this.url.protocol.startsWith('https')) {
             return https.get;
         } else {
             return http.get;
