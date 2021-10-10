@@ -48,6 +48,13 @@ describe('nodejs client for spring cloud config', () => {
             .replyWithFile(200, path.resolve('./example/response.json'), {
                 'Content-Type': 'application/json',
             });
+
+        nock('https://test')
+            .persist()
+            .get(`/${serviceName}/development`)
+            .replyWithFile(200, path.resolve('./example/response.json'), {
+                'Content-Type': 'application/json',
+            });
     });
 
     test('load by http', async () => {
